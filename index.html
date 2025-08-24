@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mini Games 🎮</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>🎮 Mini Games</h1>
+    <p class="tagline">Quick, fun, no-login puzzles</p>
+  </header>
+
+  <main class="grid">
+    <a class="card" href="./games/wordle/index.html">
+      <div class="card-emoji">🟩🟨⬜</div>
+      <h2>Wordle Clone</h2>
+      <p>Guess the hidden word in limited tries.</p>
+      <span class="play-btn">Play →</span>
+    </a>
+
+    <a class="card" href="./games/emoji-guess/index.html">
+      <div class="card-emoji">😎🍔🎬</div>
+      <h2>Emoji Word Guess</h2>
+      <p>Decode the emojis. Hints included!</p>
+      <span class="play-btn">Play →</span>
+    </a>
+
+    <a class="card" href="./games/formula-guess/index.html">
+      <div class="card-emoji">🧪✈️ ∑</div>
+      <h2>Formula Guess (Aero)</h2>
+      <p>Fill the missing term in aerospace/physics formulas.</p>
+      <span class="play-btn">Play →</span>
+    </a>
+  </main>
+
+  <footer class="site-footer">
+    <p>© <span id="yr"></span> Mini Games — built by you 🚀</p>
+  </footer>
+
+  <script>
+    document.getElementById('yr').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
