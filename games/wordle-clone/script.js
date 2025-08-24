@@ -22,10 +22,26 @@ selectorButtons.forEach(btn => {
 });
 
 async function loadWords(length) {
-  const response = await fetch(`words/words${length}.json`);
-  const data = await response.json();
-  return data;
+  try {
+    // Cache-bust in case GitHub Pages is serving an older 404
+    const url = `words/words${length}.json?v=${Date.now()}`;
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(`Fetch failed ${res.status} ${res.statusText}`);
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) throw new Error("Empty or invalid JSON");
+    return data.map(w => (typeof w === "string" ? w.toUpperCase() : w));
+  } catch (err) {
+    console.warn("Using fallback word list:", err.message);
+
+    const fallback = {
+      5: ["PLANE","ROTOR","WINGS","GLIDE","CLOUD","TRACK","DRIVE","CRANE","DELTA","SPEED"],
+      6: ["THRUST","TURBINE","AERIAL","ROCKET","ENGINE","SENSOR","FILTER","INTAKE"],
+      7: ["AIRFOIL","CONTROL","ORBITAL","PAYLOAD","AVIONIC","TRAJECT"]
+    };
+    return fallback[length] || fallback[5];
+  }
 }
+
 
 function pickRandomWord(words) {
   const randomIndex = Math.floor(Math.random() * words.length);
@@ -131,18 +147,30 @@ function endGame() {
 
 restartBtn.addEventListener("click", startGame);
 
-async function startGame() {
-  gameOver = false;
+async function startGame(len = 5) {
+  wordLength = len;
   currentRow = 0;
   currentGuess = "";
-  message.textContent = "";
-  restartBtn.style.display = "none";
+  gameOver = false;
+
   wordList = await loadWords(wordLength);
-  targetWord = pickRandomWord(wordList);
-  createBoard();
-  createKeyboard();
-  updateRow();
+  targetWord = wordList[Math.floor(Math.random() * wordList.length)];
+
+  buildBoard();       // your function that creates the grid DOM
+  buildKeyboard();    // your function that renders on-screen keys
+  updateRow();        // render the first empty row
+  showMessage("");    // clear messages
+  console.log("Target:", targetWord); // helpful for testing
 }
+
+// wire up the length buttons
+document.querySelectorAll("#word-length-selector button").forEach(btn => {
+  btn.addEventListener("click", () => startGame(parseInt(btn.dataset.len, 10)));
+});
+
+// on load
+window.addEventListener("load", () => startGame(5));
+
 
 function createKeyboard() {
   keyboardContainer.innerHTML = "";
