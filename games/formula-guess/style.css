@@ -1,0 +1,49 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f8ff;
+  text-align: center;
+  margin-top: 100px;
+}
+
+.game-container {
+  background: #fff;
+  padding: 20px;
+  max-width: 500px;
+  margin: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+#formula-display {
+  font-size: 24px;
+  margin: 20px 0;
+}
+
+input {
+  padding: 10px;
+  width: 60%;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#feedback {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+#hint {
+  color: #555;
+  font-style: italic;
+}
+#reveal-box {
+  background-color: #eef;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+}

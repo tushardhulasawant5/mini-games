@@ -1,0 +1,104 @@
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background: #f0f0f0;
+  padding: 20px;
+}
+
+#word-length-selector button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#game-board {
+  display: grid;
+  gap: 5px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.cell {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #ccc;
+  margin: 2px;
+  text-align: center;
+  line-height: 40px;
+  font-size: 24px;
+  text-transform: uppercase;
+  background-color: white;
+}
+
+.correct {
+  background-color: #6aaa64;
+  color: white;
+}
+
+.present {
+  background-color: #c9b458;
+  color: white;
+}
+
+.absent {
+  background-color: #787c7e;
+  color: white;
+}
+
+#keyboard {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  margin: 5px 0;
+}
+
+.key {
+  margin: 2px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #d3d6da;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  min-width: 40px;
+  text-align: center;
+}
+
+.key.correct {
+  background-color: #6aaa64;
+  color: white;
+}
+
+.key.present {
+  background-color: #c9b458;
+  color: white;
+}
+
+.key.absent {
+  background-color: #787c7e;
+  color: white;
+}
+
+.key[data-key="Enter"],
+.key[data-key="Backspace"] {
+  min-width: 65px;
+}
+
+#restart {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+}

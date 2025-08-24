@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Emoji Word Guess</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav style="text-align:center;margin:12px 0;">
+  <a href="../../index.html" style="color:#22c55e;text-decoration:none;font-weight:600;">← Back to Mini Games</a>
+</nav>
+
+  <div class="game-container">
+  <h1>🧩 Emoji Word Guess</h1>
+  
+  <p id="attempt-counter">Attempts left: 5</p> <!-- NEW -->
+  <div id="emoji-display">🍔🍟🥤</div>
+
+  <input type="text" id="guess-input" placeholder="Type your guess..." />
+  <button onclick="checkGuess()">Submit</button>
+
+  <p id="feedback"></p>
+
+  <button onclick="showHint()">Show Hint</button>
+  <p id="hint" style="display: none;"></p>
+
+  <button onclick="nextEmoji()">Next</button>
+</div>
+
+
+  <script src="script.js"></script>
+</body>
+</html>
