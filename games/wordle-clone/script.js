@@ -9,30 +9,21 @@ let wordList = [];
 const board = document.getElementById("game-board");
 const message = document.getElementById("message");
 const restartBtn = document.getElementById("restart");
-const selectorButtons = document.querySelectorAll("#word-length-selector button");
 const keyboardContainer = document.getElementById("keyboard");
 
 const KEYS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
-selectorButtons.forEach(btn => {
-  btn.addEventListener("click", async () => {
-    wordLength = parseInt(btn.dataset.length);
-    await startGame();
-  });
-});
-
+// === Load words (cache-busted) with safe fallback ===
 async function loadWords(length) {
   try {
-    // Cache-bust in case GitHub Pages is serving an older 404
     const url = `words/words${length}.json?v=${Date.now()}`;
     const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error(`Fetch failed ${res.status} ${res.statusText}`);
+    if (!res.ok) throw new Error(`Fetch failed ${res.status}`);
     const data = await res.json();
-    if (!Array.isArray(data) || data.length === 0) throw new Error("Empty or invalid JSON");
-    return data.map(w => (typeof w === "string" ? w.toUpperCase() : w));
+    if (!Array.isArray(data) || data.length === 0) throw new Error("Empty list");
+    return data.map(w => ("" + w).toUpperCase());
   } catch (err) {
     console.warn("Using fallback word list:", err.message);
-
     const fallback = {
       5: ["PLANE","ROTOR","WINGS","GLIDE","CLOUD","TRACK","DRIVE","CRANE","DELTA","SPEED"],
       6: ["THRUST","TURBINE","AERIAL","ROCKET","ENGINE","SENSOR","FILTER","INTAKE"],
@@ -42,12 +33,7 @@ async function loadWords(length) {
   }
 }
 
-
-function pickRandomWord(words) {
-  const randomIndex = Math.floor(Math.random() * words.length);
-  return words[randomIndex].toUpperCase();
-}
-
+// === Board & keyboard ===
 function createBoard() {
   board.innerHTML = "";
   for (let i = 0; i < maxGuesses; i++) {
@@ -69,9 +55,32 @@ function updateRow() {
   }
 }
 
+function createKeyboard() {
+  keyboardContainer.innerHTML = "";
+  const layout = [
+    ["Q","W","E","R","T","Y","U","I","O","P"],
+    ["A","S","D","F","G","H","J","K","L"],
+    ["Enter","Z","X","C","V","B","N","M","Backspace"]
+  ];
+  layout.forEach(keys => {
+    const rowDiv = document.createElement("div");
+    rowDiv.classList.add("keyboard-row");
+    keys.forEach(k => {
+      const b = document.createElement("button");
+      b.textContent = k === "Backspace" ? "⌫" : k;
+      b.className = "key";
+      b.dataset.key = k;
+      b.addEventListener("click", () => handleKey(k));
+      rowDiv.appendChild(b);
+    });
+    keyboardContainer.appendChild(rowDiv);
+  });
+}
+
+// === Input handling ===
 function handleKey(e) {
   if (gameOver) return;
-  const key = e.key ? e.key.toUpperCase() : e.toUpperCase();
+  const key = e?.key ? e.key.toUpperCase() : ("" + e).toUpperCase();
 
   if (key === "ENTER") {
     submitGuess();
@@ -84,13 +93,16 @@ function handleKey(e) {
   }
 }
 
+document.addEventListener("keydown", handleKey); // enable physical keyboard
+
 function submitGuess() {
   if (currentGuess.length !== wordLength) {
     showMessage("⛔ Not enough letters");
     return;
   }
 
-  if (!wordList.includes(currentGuess.toLowerCase())) {
+  // wordList is UPPERCASE; guesses are built in UPPERCASE too
+  if (!wordList.includes(currentGuess)) {
     showMessage("❌ Not a valid word");
     return;
   }
@@ -106,7 +118,7 @@ function submitGuess() {
 
     if (letter === targetArray[i]) {
       cell.classList.add("correct");
-      if (keyButton) keyButton.classList.remove("present", "absent"), keyButton.classList.add("correct");
+      if (keyButton) keyButton.classList.remove("present","absent"), keyButton.classList.add("correct");
     } else if (targetArray.includes(letter)) {
       cell.classList.add("present");
       if (keyButton && !keyButton.classList.contains("correct")) {
@@ -133,74 +145,38 @@ function submitGuess() {
   if (currentRow === maxGuesses) {
     showMessage(`❌ Game Over! Word was: ${targetWord}`);
     endGame();
+  } else {
+    updateRow();
   }
 }
 
-function showMessage(msg) {
-  message.textContent = msg;
-}
+function showMessage(msg) { message.textContent = msg; }
+function endGame() { gameOver = true; restartBtn.style.display = "inline-block"; }
 
-function endGame() {
-  gameOver = true;
-  restartBtn.style.display = "inline-block";
-}
+restartBtn.addEventListener("click", () => startGame(wordLength));
 
-restartBtn.addEventListener("click", startGame);
-
+// === Start / length selection ===
 async function startGame(len = 5) {
   wordLength = len;
   currentRow = 0;
   currentGuess = "";
   gameOver = false;
+  restartBtn.style.display = "none";
 
   wordList = await loadWords(wordLength);
   targetWord = wordList[Math.floor(Math.random() * wordList.length)];
 
-  buildBoard();       // your function that creates the grid DOM
-  buildKeyboard();    // your function that renders on-screen keys
-  updateRow();        // render the first empty row
-  showMessage("");    // clear messages
-  console.log("Target:", targetWord); // helpful for testing
+  createBoard();
+  createKeyboard();
+  updateRow();
+  showMessage("");
+  console.log("Target:", targetWord);
 }
 
-// wire up the length buttons
+// hook up the three buttons (they use data-length in your HTML)
 document.querySelectorAll("#word-length-selector button").forEach(btn => {
-  btn.addEventListener("click", () => startGame(parseInt(btn.dataset.len, 10)));
+  btn.addEventListener("click", () => startGame(parseInt(btn.dataset.length, 10)));
 });
 
-// on load
+// boot
 window.addEventListener("load", () => startGame(5));
-
-
-function createKeyboard() {
-  keyboardContainer.innerHTML = "";
-
-  const layout = [
-    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
-    ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-    ["Enter", "Z", "X", "C", "V", "B", "N", "M", "Backspace"]
-  ];
-
-  layout.forEach(row => {
-    const rowDiv = document.createElement("div");
-    rowDiv.classList.add("keyboard-row");
-
-    row.forEach(key => {
-      const button = document.createElement("button");
-      button.textContent = key === "Backspace" ? "⌫" : key;
-      button.className = "key";
-      button.setAttribute("data-key", key);
-      button.addEventListener("click", () => handleKey(key));
-      rowDiv.appendChild(button);
-    });
-
-    keyboardContainer.appendChild(rowDiv);
-  });
-}
-
-
-
-
-window.addEventListener("load", () => {
-  startGame();
-});
