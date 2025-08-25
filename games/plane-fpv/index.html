@@ -23,16 +23,19 @@
   <div id="overlay">
     <div style="text-align:center">
       <h1>Plane FPV (3D)</h1>
-      <p>Click Start to lock mouse and begin</p>
+      <p>Click Start to begin</p>
       <button id="startBtn">Start</button>
+      <p id="hint" style="opacity:.8;font-size:12px;margin-top:8px;"></p>
     </div>
   </div>
 
-  <!-- Crosshair + Canvas -->
   <div id="crosshair"></div>
   <canvas id="c"></canvas>
+<!-- in <head> -->
+<link rel="icon" href="data:,"> <!-- prevent 404 -->
 
-  <!-- IMPORTANT: load main.js as an ES module -->
-  <script type="module" src="main.js"></script>
+<!-- at the end of <body> -->
+<script type="module" src="main.js"></script>
+
 </body>
 </html>
